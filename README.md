@@ -18,9 +18,25 @@ import React, { Component } from 'react'
 import MyComponent from 'formo'
 import 'formo/dist/index.css'
 
+const initialValue = {
+  duc: ''
+}
+
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return (
+      <Formo
+        initialValue={initialValue}
+        onSubmit={console.log}
+        enableReinitialize
+      >
+        <Form>
+          <Field name={'duc'} />
+          <button type={'submit'}>Submit</button>
+          <button type={'reset'}>RESET</button>
+        </Form>
+      </Formo>
+    )
   }
 }
 ```
