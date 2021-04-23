@@ -1,10 +1,6 @@
-import * as React from 'react'
-import styles from './styles.module.css'
-
-interface Props {
-  text: string
-}
-
-export const ExampleComponent = ({ text }: Props) => {
-  return <div className={styles.test}>Example Component: {text}</div>
-}
+export * from './components/Formo';
+export * from './components/Form';
+export * from './components/Field';
+export * from './utilities/helper';
+export * from './hook/useField';
+export * from './types/form';
