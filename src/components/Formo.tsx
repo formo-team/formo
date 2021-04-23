@@ -12,16 +12,19 @@ import { getActionType } from '../utilities/helper';
 import { FormoProvider } from '../core/context';
 import {
   Action,
+  changeTouched,
   changeValue,
   resetValues,
+  setErrors,
+  setTouched,
   setValues,
 } from '../utilities/actions';
-import { FormoContextValues } from '../types/form';
+import { FormHelper, FormoContextValues } from '../types/form';
 
 interface FormoProps<T> {
   initialValue: T;
   enableReinitialize?: boolean;
-  onSubmit: (values: T) => void;
+  onSubmit: (values: T, helper: FormHelper<T>) => void;
 }
 
 export function Formo<T = never>({
@@ -32,7 +35,6 @@ export function Formo<T = never>({
 }: PropsWithChildren<FormoProps<T>>): ReactElement {
   const initialRef = useRef<FormState<T>>();
   const reducers = useCallback((state: FormState<T>, action: Action) => {
-    console.log(action);
     switch (action.type) {
       case getActionType(changeValue): {
         return {
@@ -43,10 +45,40 @@ export function Formo<T = never>({
           },
         };
       }
+      case getActionType(changeTouched): {
+        return {
+          ...state,
+          touched: {
+            ...state.touched,
+            [action.payload.key]: action.payload.value,
+          },
+        };
+      }
       case getActionType(setValues): {
         return {
           ...state,
-          values: action.payload,
+          values: {
+            ...state.values,
+            ...action.payload,
+          },
+        };
+      }
+      case getActionType(setErrors): {
+        return {
+          ...state,
+          errors: {
+            ...state.errors,
+            ...action.payload,
+          },
+        };
+      }
+      case getActionType(setTouched): {
+        return {
+          ...state,
+          touched: {
+            ...state.touched,
+            ...action.payload,
+          },
         };
       }
       case getActionType(resetValues): {

@@ -4767,7 +4767,7 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-"formo@link:..":
+"formo-form@link:..":
   version "0.0.0"
   uid ""
 

@@ -1,10 +1,10 @@
 {
-  "name": "formo",
+  "name": "formo-form",
   "version": "1.0.0",
   "description": "Form management",
   "author": "somibuon",
   "license": "MIT",
-  "repository": "somibuon/formo",
+  "repository": "formo-team/formo",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",

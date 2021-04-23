@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Formo, Form, Field } from 'formo';
-import { Test, Test2, Test3 } from './Test';
+import { Formo, Form, Field } from 'formo-form';
+import { Test, Test2, Test3, Test5, Test6 } from './Test';
 import 'formo/dist/index.css';
 
 const Submit: FC = () => {
@@ -26,6 +26,8 @@ const App = () => {
     });
   }, []);
 
+  console.log('RENDER FORM');
+
   return (
     <Formo
       initialValue={initialValue}
@@ -36,6 +38,8 @@ const App = () => {
         <Test />
         <Test2 />
         <Test3 />
+        <Test5 />
+        <Test6 />
         <Submit />
         <Field name={'duc'} />
         <button type={'button'} onClick={changeForm}>

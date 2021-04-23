@@ -11,13 +11,23 @@ export interface Helper {
   setFieldValue: (v: string) => void;
 }
 
+export interface FormHelper<T = never> {
+  setValues(values: Partial<T>): void;
+  setTouched(values: Partial<Record<keyof T, boolean>>): void;
+  setErrors(values: Partial<Record<keyof T, string>>): void;
+  reset(): void;
+  touched: Record<keyof T, boolean>;
+  errors: Record<keyof T, string>;
+  values: T;
+}
+
 export interface FormoContextValues<T, ActionType = DefaultAction> {
   getState(): FormState<T>;
   dispatch(action: ActionType): void;
   addSubscription(sub: Subscription<FormState<T>>): () => void;
   removeSubscription(sub: Subscription<FormState<T>>): void;
   form: {
-    submit(values: T): void;
+    submit(values: T, helper: FormHelper<T>): void;
   };
 }
 

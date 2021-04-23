@@ -2,12 +2,8 @@ import { DefaultAction, Subscription } from '../types/form';
 
 export interface FormState<T> {
   values: T;
-  errors: {
-    [key in keyof T]?: string;
-  };
-  touched: {
-    [key in keyof T]?: boolean;
-  };
+  errors: Record<keyof T, string>;
+  touched: Record<keyof T, boolean>;
 }
 
 class FormControl<T, ActionType = DefaultAction> {
@@ -26,15 +22,16 @@ class FormControl<T, ActionType = DefaultAction> {
   ) {
     this.formState = {
       values: state,
-      errors: {},
-      touched: {},
+      errors: (Object.keys(state) as any[]).reduce(
+        (acc, key) => ({ ...acc, [key]: '' }),
+        {}
+      ),
+      touched: (Object.keys(state) as any[]).reduce(
+        (acc, key) => ({ ...acc, [key]: false }),
+        {}
+      ),
     };
     this.reducer = reducer;
-    const keys: Array<keyof T> = Object.keys(state) as any;
-    keys.map((key: keyof T) => {
-      this.formState.touched[key] = false;
-      this.formState.errors[key] = '';
-    });
   }
 
   dispatch = (action: ActionType): void => {
