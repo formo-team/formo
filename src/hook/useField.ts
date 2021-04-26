@@ -43,5 +43,6 @@ export function useField<T = any>(name: string): [FieldValue, Helper] {
   const helper = useMemo(() => {
     return { setFieldValue };
   }, [setFieldValue]);
+
   return [field, helper];
 }

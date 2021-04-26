@@ -25,6 +25,7 @@ export function useValues<T extends object = any, P extends keyof T = any>(
     );
   }).current;
   const values = useRef(selector(context.getState()));
+
   useEffect(() => {
     return context.addSubscription((value) => {
       const newValue = selector(value);
@@ -34,5 +35,6 @@ export function useValues<T extends object = any, P extends keyof T = any>(
       }
     });
   }, [name]);
+
   return values.current;
 }
