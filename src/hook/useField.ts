@@ -1,38 +1,28 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import { useFormoContext } from '../core/context';
 import { FormState } from '../core/formControl';
-import { shallowEqual } from '../utilities/helper';
-import { FieldValue, Helper } from '../types/form';
+import { FieldValue, FieldHelper, FieldMeta } from '../types/form';
 import { changeTouched, changeValue } from '../utilities/actions';
-import { useRerender } from './common';
+import useFormSelector from './useFormSelector';
 
-export function useField<T = any>(name: string): [FieldValue, Helper] {
+export function useField<T = any>(
+  name: string
+): [FieldValue, FieldHelper, FieldMeta] {
   const context = useFormoContext<T>();
-  const rerender = useRerender();
-  const selector = useRef((state: FormState<T>) => {
+  const values = useFormSelector((state: FormState<T>) => {
     return {
       value: state.values[name],
       touched: state.touched[name],
       error: state.errors[name],
     };
-  }).current;
-  const values = useRef(selector(context.getState()));
-  useEffect(() => {
-    return context.addSubscription((value) => {
-      const newValue = selector(value);
-      if (!shallowEqual(newValue, values.current)) {
-        values.current = newValue;
-        rerender();
-      }
-    });
-  }, [name]);
+  });
   const setFieldValue = useCallback(
     (value: string) => context.dispatch(changeValue({ key: name, value })),
     [name]
   );
   const field = {
     name,
-    value: values.current.value,
+    value: values.value,
     onChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
       context.dispatch(changeValue({ key: name, value: e.target.value }));
     },
@@ -43,5 +33,12 @@ export function useField<T = any>(name: string): [FieldValue, Helper] {
   const helper = useMemo(() => {
     return { setFieldValue };
   }, [setFieldValue]);
-  return [field, helper];
+  const meta = useMemo(
+    () => ({
+      touched: values.touched,
+      error: values.error,
+    }),
+    [values.touched, values.error]
+  );
+  return [field, helper, meta];
 }

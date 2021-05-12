@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { useField, useValues } from 'formo-form';
+import { useField, useValues, useErrors } from 'formo-form';
 
 export const Test = memo(() => {
   const [field] = useField('duc');
@@ -40,12 +40,10 @@ export const Test3 = memo(() => {
 
 export const Test5 = memo(() => {
   const values = useValues();
-  console.log('render test5');
   return <div>{JSON.stringify(values)}</div>;
 });
 
 export const Test6 = memo(() => {
-  const values = useValues(['duc5']);
-  console.log('render test6');
-  return <div>{JSON.stringify(values)}</div>;
+  const error = useErrors();
+  return <div>{JSON.stringify(error)}</div>;
 });

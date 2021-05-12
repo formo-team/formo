@@ -1,11 +1,19 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Formo, Form, Field } from 'formo-form';
 import { Test, Test2, Test3, Test5, Test6 } from './Test';
-import 'formo/dist/index.css';
+import { FormError } from '../../src';
 
 const Submit: FC = () => {
   return <button type={'submit'}>Submit</button>;
 };
+
+interface Form {
+  duc: string;
+  duc2: string;
+  duc3: string;
+  duc4: string;
+  duc5: string;
+}
 
 const App = () => {
   const [initialValue, setInitialValues] = useState({
@@ -28,11 +36,20 @@ const App = () => {
 
   console.log('RENDER FORM');
 
+  const validation = useCallback((values: Form): Partial<FormError<Form>> => {
+    const errors: Partial<FormError<Form>> = {};
+    if (values.duc.length < 5) {
+      errors.duc = 'Duc loi roi';
+    }
+    return errors;
+  }, []);
+
   return (
     <Formo
       initialValue={initialValue}
       onSubmit={console.log}
       enableReinitialize
+      validation={validation}
     >
       <Form>
         <Test />

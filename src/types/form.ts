@@ -7,17 +7,23 @@ export interface FieldValue {
   onChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
 }
 
-export interface Helper {
+export type FormError<T> = Record<keyof T, string | undefined | null>;
+
+export interface FieldHelper {
   setFieldValue: (v: string) => void;
+}
+export interface FieldMeta {
+  error: string;
+  touched: boolean;
 }
 
 export interface FormHelper<T = never> {
   setValues(values: Partial<T>): void;
   setTouched(values: Partial<Record<keyof T, boolean>>): void;
-  setErrors(values: Partial<Record<keyof T, string>>): void;
+  setErrors(values: Partial<FormError<T>>): void;
   reset(): void;
   touched: Record<keyof T, boolean>;
-  errors: Record<keyof T, string>;
+  errors: FormError<T>;
   values: T;
 }
 
@@ -27,7 +33,8 @@ export interface FormoContextValues<T, ActionType = DefaultAction> {
   addSubscription(sub: Subscription<FormState<T>>): () => void;
   removeSubscription(sub: Subscription<FormState<T>>): void;
   form: {
-    submit(values: T, helper: FormHelper<T>): void;
+    submit(): void;
+    getFormHelper(): FormHelper<T>;
   };
 }
 

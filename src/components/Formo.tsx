@@ -16,22 +16,27 @@ import {
   changeValue,
   resetValues,
   setErrors,
+  setIsValidating,
   setTouched,
   setValues,
 } from '../utilities/actions';
-import { FormHelper, FormoContextValues } from '../types/form';
+import { FormError, FormHelper, FormoContextValues } from '../types/form';
 
-interface FormoProps<T> {
+interface FormoProps<T extends object> {
   initialValue: T;
   enableReinitialize?: boolean;
   onSubmit: (values: T, helper: FormHelper<T>) => void;
+  validation?: (
+    values: T
+  ) => Partial<FormError<T>> | Promise<Partial<FormError<T>>>;
 }
 
-export function Formo<T = never>({
+export function Formo<T extends object>({
   initialValue,
   children,
   onSubmit,
   enableReinitialize,
+  validation,
 }: PropsWithChildren<FormoProps<T>>): ReactElement {
   const initialRef = useRef<FormState<T>>();
   const reducers = useCallback((state: FormState<T>, action: Action) => {
@@ -87,6 +92,12 @@ export function Formo<T = never>({
           ...initialRef.current,
         };
       }
+      case getActionType(setIsValidating): {
+        return {
+          ...state,
+          isValidating: !!action.payload,
+        };
+      }
       default: {
         return state;
       }
@@ -97,6 +108,53 @@ export function Formo<T = never>({
     initialRef.current = formControl.getState();
   }, []);
 
+  const runValidation = useCallback(async (): Promise<
+    undefined | Partial<FormError<T>>
+  > => {
+    const { values } = formControl.getState();
+    if (validation) {
+      const error = await validation(values);
+      return error;
+    }
+    return undefined;
+  }, []);
+  const getFormHelper = useCallback(() => {
+    const { getState, dispatch } = formControl;
+    const formState = getState();
+    const formHelper: FormHelper<T> = {
+      reset() {
+        dispatch(resetValues());
+      },
+      errors: formState.errors,
+      touched: formState.touched,
+      values: formState.values,
+      setErrors(values: FormError<T>) {
+        dispatch(setErrors(values));
+      },
+      setTouched(values: Record<keyof T, boolean>) {
+        dispatch(setValues(values));
+      },
+      setValues(values: Partial<T>) {
+        dispatch(setValues(values));
+      },
+    };
+    return formHelper;
+  }, [formControl]);
+  const handleSubmit = useCallback(() => {
+    const { dispatch, getState } = formControl;
+    formControl.dispatch(setIsValidating(true));
+    runValidation().then((error) => {
+      formControl.dispatch(setIsValidating(false));
+      if (error && Object.keys(error).length !== 0) {
+        dispatch(setErrors(error));
+      } else {
+        dispatch(setErrors(initialRef.current?.errors || {}));
+        const formState = getState();
+        const formHelper = getFormHelper();
+        return onSubmit(formState.values, formHelper);
+      }
+    });
+  }, [getFormHelper, formControl]);
   const formValue = useMemo<FormoContextValues<T>>(
     () => ({
       getState: formControl.getState,
@@ -104,10 +162,11 @@ export function Formo<T = never>({
       removeSubscription: formControl.removeSubscription,
       dispatch: formControl.dispatch,
       form: {
-        submit: onSubmit,
+        submit: handleSubmit,
+        getFormHelper,
       },
     }),
-    [onSubmit, formControl]
+    [formControl, getFormHelper, handleSubmit]
   );
   useEffect(() => {
     if (enableReinitialize) {

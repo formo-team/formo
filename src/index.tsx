@@ -4,4 +4,6 @@ export * from './components/Field';
 export * from './utilities/helper';
 export * from './hook/useField';
 export * from './hook/useValues';
+export * from './hook/useErrors';
+export * from './hook/useTouched';
 export * from './types/form';

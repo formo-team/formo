@@ -1,12 +1,12 @@
 import React, { ComponentType, InputHTMLAttributes, ReactElement } from 'react';
-import { FieldValue, Helper } from '../types/form';
+import { FieldHelper, FieldValue } from '../types/form';
 import { useField } from '../hook/useField';
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   component?: ComponentType<InputHTMLAttributes<HTMLInputElement> & any>;
-  children?: (field: FieldValue, helper: Helper) => ReactElement;
-  render?: (field: FieldValue, helper: Helper) => ReactElement;
+  children?: (field: FieldValue, helper: FieldHelper) => ReactElement;
+  render?: (field: FieldValue, helper: FieldHelper) => ReactElement;
 }
 
 export function Field({

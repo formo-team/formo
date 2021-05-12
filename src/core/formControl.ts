@@ -1,9 +1,10 @@
-import { DefaultAction, Subscription } from '../types/form';
+import { DefaultAction, FormError, Subscription } from '../types/form';
 
 export interface FormState<T> {
   values: T;
-  errors: Record<keyof T, string>;
+  errors: FormError<T>;
   touched: Record<keyof T, boolean>;
+  isValidating: boolean;
 }
 
 class FormControl<T, ActionType = DefaultAction> {
@@ -30,6 +31,7 @@ class FormControl<T, ActionType = DefaultAction> {
         (acc, key) => ({ ...acc, [key]: false }),
         {}
       ),
+      isValidating: false,
     };
     this.reducer = reducer;
   }
@@ -58,8 +60,9 @@ class FormControl<T, ActionType = DefaultAction> {
   };
 
   private notifySubscriber = (): void => {
+    const state = this.getState();
     this.subscription.forEach((sub) => {
-      sub(this.formState);
+      sub(state);
     });
   };
 }
