@@ -168,11 +168,13 @@ export function Formo<T extends object>({
     }),
     [formControl, getFormHelper, handleSubmit]
   );
+
   useEffect(() => {
     if (enableReinitialize) {
       formControl.dispatch(setValues(initialValue));
       initialRef.current = formControl.getState();
     }
   }, [initialValue, enableReinitialize]);
+
   return <FormoProvider value={formValue}>{children}</FormoProvider>;
 }

@@ -21,9 +21,12 @@ export function Field({
     const C = component;
     return <C {...field} {...other} />;
   }
+
   const renderProps = render || children;
+
   if (renderProps) {
     return renderProps(field, helper);
   }
+
   return <input {...field} {...other} />;
 }

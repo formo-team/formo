@@ -14,21 +14,22 @@
   "scripts": {
     "build": "microbundle-crl --no-compress --format modern,cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
+    "prepare": "run-s build && husky install",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint .",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "cd example && yarn install && yarn run build",
-    "deploy": "gh-pages -d example/build"
+    "deploy": "gh-pages -d example/build",
+    "format": "npx lint-staged"
   },
   "peerDependencies": {
     "react": "^16.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^25.1.4",
     "@types/node": "^12.12.38",
@@ -36,7 +37,6 @@
     "@types/react-dom": "^16.9.7",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
-    "microbundle-crl": "^0.13.10",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
@@ -50,6 +50,9 @@
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-standard": "^4.0.1",
     "gh-pages": "^2.2.0",
+    "husky": "^6.0.0",
+    "lint-staged": ">=10",
+    "microbundle-crl": "^0.13.10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
     "react": "^16.13.1",
@@ -59,5 +62,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1"
+  }
 }
